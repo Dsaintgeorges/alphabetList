@@ -1,11 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import OrderList from './src/component/orderList';
 
 export default function App() {
+
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+    <OrderList></OrderList>
       <StatusBar style="auto" />
     </View>
   );
@@ -17,5 +20,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    alignContent:'center',
+    alignSelf:"center"
   },
 });
