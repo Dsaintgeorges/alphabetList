@@ -1,53 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
-function OrderList() {
+import { FlatList, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
+var _ = require('lodash');
+function OrderList({list,onPress,style,textStyle,onPressIndex,customIndexItem,objectPath}) {
+
   const [listItem, setListItem] = useState([]);
   const [arrayItem, setArrayItem] = useState([]);
   const [alphabetArray, setAlphabetArray] = useState([]);
   const [temp, setTemp] = useState(0);
-  let list = [
-    {
-      text: "Anvers",
-    },
-    {
-      text: "Averbode",
-    },
-    {
-      text: "Bruxelles",
-    },
-    {
-      text: "Bruges",
-    },
-    {
-      text: "Mons",
-    },
-    {
-      text: "Maredsous",
-    },
-    {
-      text: "Moinil",
-    },
-    {
-      text: "Namur",
-    },
-    {
-      text: "Liège",
-    },
-    {
-      text: "Leuze",
-    },
-    {
-      text: "Namèche",
-    },
-    {
-      text: "Nandrin",
-    },
-    {
-      text: "Nanine",
-    },
-  ];
-
-  let array = [];
+  const [objPath,setObjPath] = useState("");
+  
   let respArray = [];
 
   const orderList = (listToOrder) => {
@@ -60,15 +21,18 @@ function OrderList() {
     let test = liste;
     let number = 0;
     for (let i = 1; i <= liste.length; i++) {
-      if (test[i - 1]?.text.substring(0, 1) != test[i]?.text.substring(0, 1)) {
+      let value1 = _.get(test[i - 1],objPath)
+      let value2 = _.get(test[i],objPath)
+      console.log(value1?.substring(0,1),value2?.substring(0,1));
+       if (value1?.substring(0, 1) != value2?.substring(0, 1)) {
         number++;
+        console.log(i)
         array.push({
-          text: test[i]?.text.substring(0, 1),
+          text: value2?.substring(0, 1),
           index: i + 1,
         });
       }
     }
-    console.log(array, "he suis arrat");
     return array;
   };
 
@@ -77,31 +41,33 @@ function OrderList() {
     let number = 0;
     for (let i = 0; i < liste.length; i++) {
       number++;
-      respArray.splice(liste[i].index + i, 0, { text: liste[i].text });
-    }
-    return respArray;
+      respArray.splice(liste[i].index + i, 0, customIndexItem != null ? { text: liste[i].text }:{ text: liste[i].text });
+    }     
+    return respArray.slice(1);
   };
   useEffect(() => {
     setListItem(orderList(list));
     setTemp(1);
+    setObjPath(Object.getOwnPropertyNames(list[0])[0])
   }, []);
   useEffect(() => {
     // addAlphabet(orderList(list))
-    console.log(listItem, "jz quiq listitme");
+    //console.log(objPath);
     setAlphabetArray(addAlphabet(listItem));
   }, [temp]);
   useEffect(() => {
     setArrayItem(addAlphabetToList(alphabetArray));
   }, [alphabetArray]);
 
-  const renderItem = ({ item, index }) => <Text>{item?.text}</Text>;
+  const renderItem = ({ item , index }) => <TouchableWithoutFeedback onPress={(item.text)?.length <2 ? onPressIndex :onPress}><Text style={textStyle}>{item?.text}</Text></TouchableWithoutFeedback>;
 
   return (
-    <View style={styles.container}>
+      <View style={[styles.container,style]}>
       <FlatList
         data={arrayItem}
         //keyExtractor={(item)=> item?.number.toString()}
         renderItem={renderItem}
+        contentContainerStyle={style}
       ></FlatList>
     </View>
   );
